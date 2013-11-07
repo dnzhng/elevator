@@ -1,0 +1,26 @@
+Elevator started
+Rider  0: at floor: 3 going to 2
+Rider  3: at floor: 3 going to 4
+Rider  1: at floor: 0 going to 4
+Rider  4: at floor: 3 going to 0
+Rider  2: at floor: 3 going to 2
+Elevator 0 was called to floor 3
+3 []
+elevator 0 opens on floor 3 for 1 riders
+Rider entered elevator 0
+Elevator 0 was called to floor 4
+Elevator 0 was called to floor 3
+elevator 0 closes on floor 3 with 1 riders on
+4 []
+Elevator 0 was called to floor 3
+elevator 0 opens on floor 4 for 1 riders
+Rider entered elevator 0
+Elevator 0 was called to floor 2
+Rider exited elevator 0
+Rider3 satisfied
+Rider entered elevator 0
+Elevator 0 was called to floor 0
+Elevator 0 was called to floor 0
+elevator 0 closes on floor 4 with 2 riders on
+3 [2, 0]
+elevator 0 opens on floor 3 for 2 riders
