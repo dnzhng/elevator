@@ -1,6 +1,6 @@
 package test;
 
-import test.SingleElevatorTester.SuccessCount;
+import test.ElevatorTester.SuccessCount;
 import interfaces.AbstractBuilding;
 import interfaces.AbstractElevator;
 
