@@ -114,8 +114,6 @@ public class SmartElevator extends AbstractElevator implements Runnable{
 		
 		floorRequests
 				.put(myCurrentFloor, floorRequests.get(myCurrentFloor) - 1);
-
-		//System.out.println("waiting on door + " + floorRequests.get(myCurrentFloor));
 		
 		while (myCurrentRiderCount == myMaxOccupancy && floorRequests.get(myCurrentFloor) > 0) {
 			try {
