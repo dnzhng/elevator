@@ -24,20 +24,23 @@ public class SimpleElevator extends AbstractElevator implements Runnable {
 	private Map<Integer, Integer> floorRequests;
 	private int myCurrentRiderCount;
 
+	private int myMaxOccupancy;
+
 	private boolean doorsOpen;
 	private int myID;
 
 	// private Object myDoor = new Object();
 
-	public SimpleElevator(int numFloors, int elevatorId,
-			int maxOccupancyThreshold, int initialFloor) {
-		super(numFloors, elevatorId, maxOccupancyThreshold);
-		myCurrentFloor = 0;//initialFloor;
+	public SimpleElevator(int numFloors, int elevatorId, int maxOccupancy,
+			int initialFloor) {
+		super(numFloors, elevatorId, maxOccupancy);
+		myCurrentFloor = initialFloor;
 		myRequestedFloors = new LinkedList<Integer>();
 		myCurrentRiderCount = 0;
 		doorsOpen = false;
 		myID = elevatorId;
 		floorRequests = new HashMap<Integer, Integer>();
+		myMaxOccupancy = maxOccupancy;
 
 	}
 
@@ -46,7 +49,8 @@ public class SimpleElevator extends AbstractElevator implements Runnable {
 
 		doorsOpen = true;
 		System.out.println("elevator " + myID + " opens on floor "
-				+ myCurrentFloor + " for " + floorRequests.get(myCurrentFloor) + " riders");
+				+ myCurrentFloor + " for " + floorRequests.get(myCurrentFloor)
+				+ " riders");
 
 		notifyAll();
 
@@ -54,41 +58,39 @@ public class SimpleElevator extends AbstractElevator implements Runnable {
 
 	@Override
 	public synchronized void ClosedDoors() {
-		
+
 		while (floorRequests.get(myCurrentFloor) > 0) {
 			notifyAll();
 			try {
-				
 				wait();
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		
+
 		doorsOpen = false;
 		System.out.println("elevator " + myID + " closes on floor "
 				+ myCurrentFloor + " with " + myCurrentRiderCount
 				+ " riders on");
+		notifyAll();
 
 	}
 
 	@Override
 	public synchronized void VisitFloor(int floor) {
-		
-//		while(myRequestedFloors.contains(floor)){
-//			myRequestedFloors.remove(floor);
-//		}
-		
-		if(!floorRequests.containsKey(myCurrentFloor)){
-			floorRequests.put(myCurrentFloor,0);
+
+		if (!floorRequests.containsKey(myCurrentFloor)) {
+			floorRequests.put(myCurrentFloor, 0);
 		}
-		
-		while(floorRequests.get(myCurrentFloor) > 0){
+
+		while (floorRequests.get(myCurrentFloor) > 0) {
 			OpenDoors();
-			ClosedDoors();	
+			ClosedDoors();
 		}
 		myCurrentFloor = floor;
+		
+		System.out.println("ELEVATOR " + myID + " NOW AT FLOOR " + myCurrentFloor);
+		
 		notifyAll();
 		OpenDoors();
 		ClosedDoors();
@@ -96,8 +98,21 @@ public class SimpleElevator extends AbstractElevator implements Runnable {
 
 	@Override
 	public synchronized boolean Enter() {
-
+		int floor = myCurrentFloor;
 		while (!doorsOpen) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		floorRequests
+				.put(myCurrentFloor, floorRequests.get(myCurrentFloor) - 1);
+
+		//System.out.println("waiting on door + " + floorRequests.get(myCurrentFloor));
+		
+		while (myCurrentRiderCount == myMaxOccupancy && floorRequests.get(myCurrentFloor) > 0) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -105,8 +120,15 @@ public class SimpleElevator extends AbstractElevator implements Runnable {
 				e.printStackTrace();
 			}
 		}
-		floorRequests
-				.put(myCurrentFloor, floorRequests.get(myCurrentFloor) - 1);
+
+		if (floor != myCurrentFloor || myCurrentRiderCount == myMaxOccupancy) {
+
+			System.out.println("Rider unable to enter elevator " + myID
+					+ " because of capacity ");
+			notifyAll();
+			return false;
+		}
+
 		myCurrentRiderCount += 1;
 		System.out.println("Rider entered elevator " + myID);
 		notifyAll();
@@ -124,9 +146,9 @@ public class SimpleElevator extends AbstractElevator implements Runnable {
 				e.printStackTrace();
 			}
 		}
-		
+
 		System.out.println("Rider exited elevator " + myID);
-		
+
 		floorRequests
 				.put(myCurrentFloor, floorRequests.get(myCurrentFloor) - 1);
 		myCurrentRiderCount -= 1;
@@ -139,43 +161,39 @@ public class SimpleElevator extends AbstractElevator implements Runnable {
 
 		System.out
 				.println("Elevator " + myID + " was called to floor " + floor);
-		//System.out.println(myRequestedFloors);
-				
-		if(!myRequestedFloors.contains(floor)){
+		if (!myRequestedFloors.contains(floor)) {
 			myRequestedFloors.add(floor);
 		}
-		
+
 		if (!floorRequests.containsKey(floor)) {
 			floorRequests.put(floor, 0);
 		}
 		floorRequests.put(floor, floorRequests.get(floor) + 1);
 
-		while (myCurrentFloor != floor ) {
+		while (myCurrentFloor != floor) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		
-		if(myRequestedFloors.size() > 1){
+
+		if (myRequestedFloors.size() > 1) {
 			myRequestedFloors.remove(myCurrentFloor);
 		}
-		
+
 	}
 
 	@Override
 	public void run() {
 		System.out.println("Elevator " + myID + " started");
 		while (true) {
-			synchronized(this) {
-			Integer nextFloor = myRequestedFloors.poll();
-			if (nextFloor != null ){//&& nextFloor != myCurrentFloor) {
-				System.out.println(nextFloor + " " + myRequestedFloors);
-				VisitFloor(nextFloor);
-				//OpenDoors();
-				//ClosedDoors();
-			}
+			synchronized (this) {
+				Integer nextFloor = myRequestedFloors.poll();
+				if (nextFloor != null) {
+					System.out.println(nextFloor + " " + myRequestedFloors);
+					VisitFloor(nextFloor);
+				}
 			}
 
 		}

@@ -1,5 +1,6 @@
 package test;
 
+import test.SingleElevatorTester.SuccessCount;
 import interfaces.AbstractBuilding;
 import interfaces.AbstractElevator;
 
@@ -18,18 +19,42 @@ public class Rider implements Runnable {
 	private AbstractBuilding myBuilding;
 	private AbstractElevator myElevator;
 	private int myID;
+	private SuccessCount successCount;
 	
-	public Rider(int currentFloor, int requestedFloor, AbstractBuilding building, int id){
+	public Rider(int currentFloor, int requestedFloor, AbstractBuilding building, int id, SuccessCount successCount){
 		myCurrentFloor = currentFloor;
 		myRequestedFloor = requestedFloor;
 		myBuilding = building;
 		myID = id;
+		this.successCount = successCount;
 	}
 	
 	
 	@Override
 	public void run() {
+		pressButton();
+	}
+
+	private void rideElevator() {
+		if(!myElevator.Enter()){
+			pressButton();
+			return;
+		}
+		myElevator.RequestFloor(myRequestedFloor);
+		myElevator.Exit();
 		
+		synchronized(successCount){
+			
+			successCount.increment();
+			System.out.println("Rider"+ myID +" satisfied. " + successCount.getCount() + " done!");			
+
+		}
+		
+
+	}
+
+
+	private void pressButton() {
 		int direction = myCurrentFloor - myRequestedFloor;
 		System.out.println("Rider  " + myID + ": at floor: " + myCurrentFloor + " going to " + myRequestedFloor);
 		if(direction == 0){
@@ -37,26 +62,12 @@ public class Rider implements Runnable {
 		}
 		else{
 			if(direction > 0){
-				
 				myElevator = myBuilding.CallUp(myCurrentFloor);
 			}
 			else{
 				myElevator = myBuilding.CallDown(myCurrentFloor);
 			}
 			rideElevator();
-			System.out.println("Rider"+ myID +" satisfied");			
-
-		}
 	}
-
-	private void rideElevator() {
-		myElevator.Enter();
-		//System.out.println("Rider"+ myID +" entered elevator");
-		myElevator.RequestFloor(myRequestedFloor);
-		//System.out.println("Rider"+ myID +" requested floor" + myRequestedFloor);
-		myElevator.Exit();	
-		//System.out.println("Rider"+ myID +" exited elevator");
 	}
-
-
 }
