@@ -46,7 +46,7 @@ public class Rider implements Runnable {
 		synchronized(successCount){
 			
 			successCount.increment();
-			System.out.println("Rider"+ myID +" satisfied. " + successCount.getCount() + " done!");			
+			System.out.println("Rider"+ myID +" satisfied. ");			
 
 		}
 		

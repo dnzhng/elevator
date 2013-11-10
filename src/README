@@ -6,9 +6,9 @@
  * Team Info & Time spent
  *************************/
 
-	Name1: Full Name 	// Edit this accordingly
-	NetId1: fn	 	// Edit
-	Time spent: 10 hours 	// Edit 
+	Name1: Scott Valentine
+	NetId1: sdv4	 	
+	Time spent: 15 hours
 
 	Name2: Full Name 	// Edit this accordingly
 	NetId2: fn	 	// Edit
@@ -31,6 +31,60 @@
 /************************
  * Implementation details
  *************************/
+
+ ** Design overview: **
+ 
+ From a high-level, we start with the rider threads, and the Building object. The riders call 
+ elevators through the building interface as expected. The Building object uses a class of type
+ Elevator Control to dictate which elevator to return the the requesting user. This class
+ is also thread safe to prevent the same elevator being returned without accounting for new
+ rider requests. This abstraction also allows us to easily add more or less elevators as long as
+ we correctly implement the getNextElevator logic.
+ 
+ For elevators, there is the Elevator class (which extends the Abstract elevator and implements runnable - 
+ so that we can run the elevator threads) which defines all of the concurrency logic. (this is where all 
+ almost all of our wait() and notify() calls are). The efficiency logic is handled by the the subclasses, 
+ SimpleElevator (which just maintains a LinkedList of floors to visit) and SmartElevator(which keeps a
+ queue in sorted order to more efficiently serve the riders). 
+ 
+ So, when running the ElevatorTester, we first initialize the buildings (which initialized the elevators)
+ and all of the rider threads. Then we start the building (which starts all of the elevators), and then start
+ the riders. The riders then follow the pattern:
+ 1. request up/down elevator.
+ 2. Get on elevator:
+ 	a) if full, wait till elevator is gone and start over  (from 1.)
+ 	b) if not full, get on.
+ 3. Request exit floor.
+ 4. Get off floor. 
+
+ By applying wait() and notify() in the elevator, the rider has the desired path.
+ 
+ Likewise the Elevator goes through the following pattern:
+ 1. Get the next node off of the list of floors to service.
+ 2. Visit the floor.
+ 3. Open the doors and wait for everyone to get on or off.
+ 4. Close the doors.
+ 5. Repeat.
+
+Also note that we end the test when all the riders have been satisfied by calling System.exit(0) in the
+ElevatorTester class. 
+
+For the implementation of our SmartElevator - we schedule floor visits based on the current shortest distance
+to the floor, changing direction only a certain points. So if we have two elevators with the following queues
+2->3->8 and 2->6, and a rider called up at floor 4, we would add it in order to the second queue (2->4->6). 
+If, using the same example, the rider called down at floor 4, we would add it to the second, but in the order:
+(2->6->4). Then if we had two more riders call down from floor 4, we would have the queues (2->3->8) and 
+(2->6->4), since 4 is already on the list.
+
+
+
+** Things to Note: **
+
+Our implementation is generally starvation proof. One exception is the case where elevators are constantly
+requested going from top to bottom or vice versa. We can consider the case where there is a rider thread 
+in between who is always prevented from getting on an elevator since the elevator is always full. 
+
+
 
 /* 
  * This section should contain the implementation details and a overview of the
@@ -64,6 +118,10 @@
 /************************
  * References
  ************************/
+
+ Java Synchronization
+http://docs.oracle.com/javase/tutorial/essential/concurrency/sync.html
+
 
 /*
  * List of collaborators involved including any online references/citations.

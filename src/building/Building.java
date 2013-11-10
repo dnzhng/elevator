@@ -3,6 +3,7 @@ package building;
 import building.elevator_controller.Direction;
 import building.elevator_controller.ElevatorControl;
 import building.elevator_controller.RandomElevatorControl;
+import building.elevator_controller.SmartElevatorControl;
 
 import interfaces.AbstractBuilding;
 import interfaces.AbstractElevator;
