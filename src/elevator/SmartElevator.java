@@ -15,8 +15,7 @@ public class SmartElevator extends Elevator{
 
 	@Override
 	public Queue<Integer> initializeQueue() {
-		// TODO Auto-generated method stub
-		return null;
+		return new SmartQueue<Integer>();
 	}
 
 

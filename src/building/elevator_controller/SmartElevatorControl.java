@@ -6,36 +6,27 @@ import java.util.List;
 import elevator.SmartElevator;
 import interfaces.AbstractElevator;
 
-public class SmartElevatorControl implements ElevatorControl, Runnable{
+public class SmartElevatorControl extends ElevatorControl{
 
-	List<SmartElevator> myElevators = new ArrayList<SmartElevator>();
-	
-	public SmartElevatorControl(int numFloors, int numElevators, int elevatorCap){
-		constructElevators(numFloors, numElevators, elevatorCap);
-	}
-	
-	
-	private void constructElevators(int numFloors, int numElevators, int elevatorCap) {
-		myElevators = new ArrayList<SmartElevator>();
-		for(int i =0; i < numElevators; ++i){
-			myElevators.add(new SmartElevator(numFloors, i, elevatorCap,0));
-		}
-	}
-
-
-	@Override
-	public void run() {
-		for(SmartElevator e: myElevators){
-			Thread elevator = new Thread(e);
-			elevator.start();
-		}
+	public SmartElevatorControl(int numFloors, int numElevators, int elevatorCap) {
+		super(numFloors, numElevators, elevatorCap);
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public AbstractElevator getNextElevator(int requestedFloor,
 			Direction direction) {
-		
+		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	protected void initializeElevators(int numFloors, int numElevators,
+			int elevatorCap) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
 
 }
