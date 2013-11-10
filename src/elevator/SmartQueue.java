@@ -194,6 +194,11 @@ public class SmartQueue<E extends Comparable<E>> implements Queue<E> {
 			return false;
 		}
 	}
+	
+	public Node<E> getHead() {
+		return myHead;
+		
+	}
 
 	private void addAscending(E arg0) {
 		Node<E> current = myHead;
