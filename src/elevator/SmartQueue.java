@@ -98,23 +98,31 @@ public class SmartQueue<E extends Comparable<E>> implements Queue<E> {
 	@Override
 	public boolean remove(Object arg0) {
 		
-		E el = (E) arg0;
-		
-		Node<E> current = myHead;
-		Node<E> prev = null;
-		
-		while(current != null){
-			if(el == current.myValue){
-				removeNode(prev, current);
-				current = prev.myNext;
-				mySize--;
-			}
-			else{
-				prev = current;
-				current = current.myNext;
-			}
-		}
-		return false;
+        E el = (E) arg0;
+        
+        Node<E> current = myHead;
+        Node<E> prev = null;
+        
+        while(current != null){
+                if(el == current.myValue){
+                	if(prev != null) {
+                        removeNode(prev, current);
+                        current = prev.myNext;
+                        mySize--;
+                	}
+                	else {
+                		myHead = current.myNext;
+                		current = null;
+                		mySize--;
+                		
+                	}
+                }
+                else{
+                        prev = current;
+                        current = current.myNext;
+                }
+        }
+        return false;
 	}
 	
 	private void removeNode(Node<E> prev, Node<E> toBeRemoved){
