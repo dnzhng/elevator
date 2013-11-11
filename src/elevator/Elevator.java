@@ -6,14 +6,6 @@ import java.util.Queue;
 
 import interfaces.AbstractElevator;
 
-/**
- * 
- * Abstract class that allows for rider threads to request floors, enter, and
- * exit concurrently. Subclasses should define the policy for floor visits.
- * 
- * @author sdv4
- * 
- */
 public abstract class Elevator extends AbstractElevator implements Runnable {
 
 	private int myCurrentFloor;
@@ -26,14 +18,8 @@ public abstract class Elevator extends AbstractElevator implements Runnable {
 	private boolean doorsOpen;
 	private int myID;
 
-	/**
-	 * Constructs a new elevator.
-	 * 
-	 * @param numFloors
-	 * @param elevatorId
-	 * @param maxOccupancy
-	 * @param initialFloor
-	 */
+	// private Object myDoor = new Object();
+
 	public Elevator(int numFloors, int elevatorId, int maxOccupancy,
 			int initialFloor) {
 		super(numFloors, elevatorId, maxOccupancy);
@@ -46,26 +32,21 @@ public abstract class Elevator extends AbstractElevator implements Runnable {
 		myMaxOccupancy = maxOccupancy;
 
 	}
-
-	/**
-	 * Initializes the queue of floors for this elevator to visit.
-	 * 
-	 * @return The queue.
-	 */
 	public abstract Queue<Integer> initializeQueue();
-
-	public synchronized int getCurrentFloor() {
+	
+	public synchronized int getCurrentFloor(){
 		return myCurrentFloor;
 	}
-
-	public synchronized int getCurrentRiderCount() {
+	
+	public synchronized int getCurrentRiderCount(){
 		return myCurrentRiderCount;
 	}
-
-	public synchronized Queue<Integer> getRequestedFloors() {
+	
+	public synchronized Queue<Integer> getRequestedFloors(){
 		return myRequestedFloors;
 	}
-
+	
+	
 	@Override
 	public synchronized void OpenDoors() {
 
@@ -104,23 +85,24 @@ public abstract class Elevator extends AbstractElevator implements Runnable {
 		if (!floorRequests.containsKey(myCurrentFloor)) {
 			floorRequests.put(myCurrentFloor, 0);
 		}
-
+		
 		while (floorRequests.get(myCurrentFloor) > 0) {
 			OpenDoors();
 			ClosedDoors();
 		}
-
+		
+		
 		myCurrentFloor = floor;
-
-		System.out.println("ELEVATOR " + myID + " NOW AT FLOOR "
-				+ myCurrentFloor);
-
+		
+		System.out.println("ELEVATOR " + myID + " NOW AT FLOOR " + myCurrentFloor);
+		
 		notifyAll();
-
-		if (floorRequests.get(myCurrentFloor) != 0) {
+		
+		if(floorRequests.get(myCurrentFloor) != 0){
 			OpenDoors();
 			ClosedDoors();
 		}
+
 
 	}
 
@@ -134,15 +116,13 @@ public abstract class Elevator extends AbstractElevator implements Runnable {
 				e.printStackTrace();
 			}
 		}
-
+		
 		floorRequests
 				.put(myCurrentFloor, floorRequests.get(myCurrentFloor) - 1);
 
-		// System.out.println("waiting on door + " +
-		// floorRequests.get(myCurrentFloor));
-
-		while (myCurrentRiderCount == myMaxOccupancy
-				&& floorRequests.get(myCurrentFloor) > 0) {
+		//System.out.println("waiting on door + " + floorRequests.get(myCurrentFloor));
+		
+		while (myCurrentRiderCount == myMaxOccupancy && floorRequests.get(myCurrentFloor) > 0) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -160,7 +140,7 @@ public abstract class Elevator extends AbstractElevator implements Runnable {
 				// just wait until next event.
 				wait();
 			} catch (InterruptedException e) {
-				// TODO
+				//TODO
 			}
 			return false;
 		}

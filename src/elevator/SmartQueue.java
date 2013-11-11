@@ -23,7 +23,7 @@ public class SmartQueue<E extends Comparable<E>> implements Queue<E> {
 	private int mySize = 0;
 		
 	
-	private class Node<E>{
+	public class Node<E>{
 		E myValue;
 		Node<E> myNext;
 	}
