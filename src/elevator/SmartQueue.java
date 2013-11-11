@@ -61,6 +61,7 @@ public class SmartQueue<E extends Comparable<E>> implements Queue<E> {
 	@Override
 	public void clear() {
 		myHead = null;
+		mySize = 0;
 	}
 
 	@Override
@@ -106,15 +107,13 @@ public class SmartQueue<E extends Comparable<E>> implements Queue<E> {
 			if(el == current.myValue){
 				removeNode(prev, current);
 				current = prev.myNext;
+				mySize--;
 			}
 			else{
 				prev = current;
 				current = current.myNext;
-				
 			}
 		}
-		
-		
 		return false;
 	}
 	
@@ -126,10 +125,10 @@ public class SmartQueue<E extends Comparable<E>> implements Queue<E> {
 			return;
 		}
 		if(toBeRemoved == null){
-			mySize --;
 			return;
 		}
 		prev.myNext = toBeRemoved.myNext;
+		mySize --;
 	}
 	
 
@@ -194,11 +193,7 @@ public class SmartQueue<E extends Comparable<E>> implements Queue<E> {
 			return false;
 		}
 	}
-	
-	public Node<E> getHead() {
-		return myHead;
-		
-	}
+
 
 	private void addAscending(E arg0) {
 		Node<E> current = myHead;
@@ -269,6 +264,7 @@ public class SmartQueue<E extends Comparable<E>> implements Queue<E> {
 		if(myHead != null){
 			E val = myHead.myValue;	
 			myHead = myHead.myNext;
+			mySize--;
 			return val;
 		}
 		
@@ -283,6 +279,7 @@ public class SmartQueue<E extends Comparable<E>> implements Queue<E> {
 		else{
 			E val = myHead.myValue;
 			myHead = myHead.myNext;
+			mySize --;
 			return val;
 		}
 	}

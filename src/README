@@ -10,8 +10,8 @@
 	NetId1: sdv4	 	
 	Time spent: 15 hours
 
-	Name2: Full Name 	// Edit this accordingly
-	NetId2: fn	 	// Edit
+	Name2: Dan Zhang
+	NetId2: dyz2	 	
 	Time spent: 10 hours 	// Edit 
 
 	Name3: Full Name 	// Edit this accordingly
@@ -69,6 +69,9 @@
 Also note that we end the test when all the riders have been satisfied by calling System.exit(0) in the
 ElevatorTester class. 
 
+
+
+
 For the implementation of our SmartElevator - we schedule floor visits based on the current shortest distance
 to the floor, changing direction only a certain points. So if we have two elevators with the following queues
 2->3->8 and 2->6, and a rider called up at floor 4, we would add it in order to the second queue (2->4->6). 
@@ -76,6 +79,9 @@ If, using the same example, the rider called down at floor 4, we would add it to
 (2->6->4). Then if we had two more riders call down from floor 4, we would have the queues (2->3->8) and 
 (2->6->4), since 4 is already on the list.
 
+Alternatively, out RandomElevatorControl simply picks an elevator at random and appends
+the requested floor to a link-list own by the elevator. This way, we have no starvation,
+since every floor must eventually be served.
 
 
 ** Things to Note: **

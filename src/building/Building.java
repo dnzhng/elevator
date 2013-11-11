@@ -25,7 +25,8 @@ public class Building extends AbstractBuilding implements Runnable{
 	
 	public Building(int numFloors, int numElevators, int elevatorCapacity) {
 		super(numFloors, numElevators);
-		myElevatorControl = new RandomElevatorControl(numFloors, numElevators, elevatorCapacity);
+		//myElevatorControl = new RandomElevatorControl(numFloors, numElevators, elevatorCapacity);
+		myElevatorControl = new SmartElevatorControl(numFloors, numElevators, elevatorCapacity);
 	}
 
 	@Override

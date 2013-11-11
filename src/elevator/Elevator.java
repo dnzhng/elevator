@@ -207,7 +207,6 @@ public abstract class Elevator extends AbstractElevator implements Runnable {
 			synchronized (this) {
 				Integer nextFloor = myRequestedFloors.poll();
 				if (nextFloor != null) {
-					System.out.println(nextFloor + " " + myRequestedFloors);
 					VisitFloor(nextFloor);
 				}
 			}

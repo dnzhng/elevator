@@ -2,12 +2,10 @@ package elevator;
 
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
+//import java.util.NoSuchElementException;
 import java.util.Queue;
 
-import elevator.SmartQueue.Node;
-
-import building.elevator_controller.Direction;
+//import building.elevator_controller.Direction;
 
 
 public class DoubleSmartQueue<E extends Comparable<E>> implements Queue<E> {
